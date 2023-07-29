@@ -1,0 +1,151 @@
+#Welcome the Players
+print("Hello! What are your names?")
+P1 = input('Player One Name: ')
+P2 = input('Player Two Name: ')
+print("Welcome to Hangman Penalty shootout,",P1,"and",P2,"!")
+# Introduce Rules
+print('You two will be competing in a Penalty shootout!\n But before getting to take a penalty, you have to play a round of hangman')
+print('Each turn, you get to guess a letter and a word!')
+print('Once per round, you can use a hint to find out the alphabet at the specific position of the word')
+print('You have 10 lives in 1 round. Guess the word wrong and you lose 1 life')
+print('When you win the hangman round, you get to take a penalty. Score the penalty and you win a point!')
+print('If you are lucky, after taking a penalty, there is a 10% chance you get to skip your opponents round and go back to your round again!')
+print('Player with most points win!')
+print("I'm sorry if the rules are too long! Good luck and have fun!")
+#code for hangman game
+import random
+turnname = ''
+# variables
+playerturn = 0
+p1points = 0
+p2points = 0
+penalty = 0
+# ask the player for customisations of the game
+turns = int(input('How many rounds do you want this game to have? (With 6 rounds, each player will guess 3 words):'))
+life = int(input('How many lives do you want for each round?(Eg.15)'))
+# one of these words will be given out as the mystery word
+for i in range(turns):
+  if playerturn % 2 == 0:
+    print(P1,'round')
+    turnname = P1
+    hintcountp1 = 0#reset hint count
+    hintcountp2 = 0
+  else:
+    print(P2,'round')
+    turnname = P2
+    hintcountp1 = 0
+    hintcountp2 = 0   #reset hint count
+  words ='incident message default temptation executive certain hypothesize insight allowance collect hesitate function contain transaction recognize behavior publicity structure initiative particle contradiction costume compose ministry trolley recording inquiry dictate recruit sandwich positive intensify opposite nomination private necklace respect daughter curriculum collection terrify shoulder surface vegetarian retreat condition'.split()
+  mysteryword = words[random.randint(0,len(words)-1)]    # choosing the mystery word
+  # variables that reset after every turn
+  guesses = []
+  lives = life  # make the lives reset to the input number every turn
+  shots = 0
+  update = 0
+#loop for one turn
+  playerturn += 1
+  while shots < lives:
+    # the update basically just forms blanks of the display word for the first round
+      if update == 0:
+        displayword = "_"*len(mysteryword)
+      print("Mystery Word:", displayword)
+      guesslett = input("Guess a letter: ").lower()    # letter guessing turn
+      if guesslett in guesses:
+          print("You already guessed this letter!")
+          continue
+      guesses.append(guesslett.lower())
+      if guesslett in mysteryword.lower():
+        print("Yes this letter IS in the word!")
+      else:
+        print('No this letter is not in the word')
+      update += 1
+      displayword = ""
+      for i in mysteryword:  #add the letter guessed correctly into the display word
+          if i in guesses:
+              displayword += i
+          else:
+              displayword += "_"
+      print(displayword)
+      if hintcountp1 == 0 and turnname == P1:    #code for the hints
+        hint = input("Fancy a hint? If yes, pls enter 'y': ")
+        if hint.lower() == 'y':
+          hintindex = int(input('Which letter of the mysteryword would you like to know?'))
+          hintindex = hintindex-1
+          print('The',hintindex+1,'letter is',mysteryword[hintindex])
+          hintcountp1 += 1
+      if hintcountp2 == 0 and turnname == P2:
+        hint = input("Fancy a hint? If yes, pls enter 'y': ")
+        if hint.lower() == 'y':
+          hintindex = int(input('Which letter of the mysteryword would you like to know?'))
+          hintindex = hintindex-1
+          print('The',hintindex+1,'letter is',mysteryword[hintindex])
+          hintcountp2 += 1
+      guessword = input("Guess the word: ")       # word guessing turn
+      if guessword.lower() == mysteryword.lower():
+          print("Yay! You guessed the word correctly!")
+          penalty = 1
+          break
+      else:
+          shots += 1
+          print("You lost a life! Lives left:", lives - shots)
+
+  if shots >= lives:
+      print("Oh no you died! Btw the word was", mysteryword)
+      if (playerturn-1) % 2 == 0:
+            print(P1,'points:',p1points)
+      else:
+            print(P2,'points: ',p2points)
+  if penalty == 1:  # penalty stage
+    penalty -= 1
+    print("Congratulations, you have been awarded your penalty")
+    gkdirection = ["TL","BL","M","TR","BR"]
+    print('Choose directions')
+    print('Top Left(TL),Bottom Left(BL),Middle(M),Top right(TR),Bottom right(BR)')
+    direction = input("Enter direction (Eg: BR):")
+    gkdive = gkdirection[random.randint(0,4)]
+    print('The goalkeeper dived to',gkdive)
+    if direction == gkdive:
+      print('Your penalty was saved!')
+      if (playerturn-1) % 2 == 0:
+         print(P1,'points:',p1points)
+      else:
+        print(P2,'points: ',p2points)
+        
+    else:
+      print('You scored your penalty!')
+      if (playerturn-1) % 2 == 0:
+         p1points += 1
+         print(P1,'points:',p1points)
+         skip = random.randint(0,9)
+         if skip == 0:
+           print("Skip turn activated!")
+           print('Your opponent has no choice but to skip their turn!')
+           print('Now it is your turn again!')
+           playerturn += 1
+          
+      else:
+        p2points += 1
+        print(P2,'points: ',p2points)
+        skip = random.randint(0,9)
+        if skip == 0:
+           print("Skip turn activated!")
+           print('Your opponent has no choice but to skip their turn!')
+           print('Now it is your turn again!')
+           playerturn += 1
+if p1points > p2points:
+  print(P1,'wins!')
+elif p2points > p1points:
+  print(P2,'wins!')
+  #tiebraker stage
+elif p2points == p1points:
+  print('Draw! But the game will only end when there is a winner!')
+  print("A coin is going to be flipped! The player that correctly guesses whether it's heads or tails wins!")
+  print(P1,'will be heads.',P2,'will be tails.')
+  input('Are you ready for the coin to be flipped? (Enter anything when ready)')
+  coin = random.randint(0,1)
+  if coin == 0:
+    print('Heads!')
+    print(P1,'wins!')
+  else:
+    print('Tails!')
+    print(P2,'wins!')
